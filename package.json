@@ -1,0 +1,32 @@
+{
+  "name": "static_site_foundation",
+  "version": "1.0.0",
+  "description": "A Static site generator powered by Contentful and stored in S3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owzzz/Static-Site-Foundation.git"
+  },
+  "keywords": [
+    "AWS",
+    "S3",
+    "AWS",
+    "Lambda",
+    "Contentful",
+    "NodeJS",
+    "Javascript"
+  ],
+  "author": "Owain Llewellyn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/owzzz/Static-Site-Foundation/issues"
+  },
+  "homepage": "https://github.com/owzzz/Static-Site-Foundation#readme",
+  "dependencies": {
+    "aws-sdk": "^2.133.0",
+    "express": "^4.16.2"
+  }
+}
