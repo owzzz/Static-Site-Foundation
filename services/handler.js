@@ -1,6 +1,11 @@
-'use strict';
 
 module.exports.sync = (event, context, callback) => {
+
+  // Content has changed
+  // Sync content and get delta
+  // Take data and run through template compiler
+  // Save in S3
+
   const response = {
     statusCode: 200,
     body: JSON.stringify({
