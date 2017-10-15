@@ -9,10 +9,8 @@ class ContentfulAdapter {
 		});
 
 		this.syncContent().then(data => {
-			console.log('data', data.nextSyncToken);
-		}).catch(err => {
-			console.log('error', err);
-		})
+			this.syncToken = data.nextSyncToken;
+		}).catch(err => console.log('error', err));
 	}
 
 	syncContent() {
@@ -26,8 +24,6 @@ class ContentfulAdapter {
 	getContentById(id) {
 		return this.client.getEntries({'sys.id': id});
 	}
-
-
 }
 
 let ContentfulInstance = new ContentfulAdapter(Config);

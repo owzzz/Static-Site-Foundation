@@ -28,6 +28,7 @@
   "dependencies": {
     "aws-sdk": "^2.133.0",
     "contentful": "^4.6.2",
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "handlebars": "^4.0.10"
   }
 }
