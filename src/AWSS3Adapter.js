@@ -68,9 +68,8 @@ class S3BucketGenerator {
 	// Put file or asset in bucket (current instance)
 	putObject(params = {}) {
 		return new Promise((resolve, reject) => {
-			return this.s3Instance.putObject(params, (err, data) => (err) ? resolve(err) : resolve(data));
+			return this.s3Instance.putObject(params, (err, data) => (err) ? reject(err) : resolve(data));
 		});
-
 	}
 	// Error handler
 	errorHandler(err) {

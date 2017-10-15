@@ -13,5 +13,6 @@ class Templater {
 	compileTemplate(template, data) {
 		return template(data);
 	}
-
 }
+
+console.log(Templater.parseTemplate('<h1>Title</h1>'));
