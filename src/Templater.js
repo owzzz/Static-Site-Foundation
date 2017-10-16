@@ -1,9 +1,12 @@
 const hbs = require('handlebars');
 
-class Templater {
-	constructor(templatePath, data = {}) {
-		this.templatePath = templatePath;
+module.exports = class Templater {
+	constructor(html, data = {}) {
+		this.html = html;
 		this.data = data;
+		this.template = this.parseTemplate(this.html);
+
+		this.compileTemplate(this.template, this.data);
 	}
 
 	parseTemplate(html) {
@@ -14,5 +17,3 @@ class Templater {
 		return template(data);
 	}
 }
-
-console.log(Templater.parseTemplate('<h1>Title</h1>'));

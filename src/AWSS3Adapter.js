@@ -1,13 +1,12 @@
 const S3 = require('aws-sdk/clients/s3');
-const Config = require('../config').S3;
 
-class S3BucketGenerator {
+module.exports = class S3BucketGenerator {
 	constructor(config) {
 		this.bucketName = config.bucketName;
 		this.bucketKey = config.bucketKey;
 		this.s3Instance = new S3();
 
-		// If not buycket name passed in, create one
+		// If no bucket name passed in, create one
 		if(!this.bucketName) {
 			this.createBucket().then(bucket => {
 				this.bucketName = bucket.Name;
@@ -20,7 +19,7 @@ class S3BucketGenerator {
 		}).catch((err) => this.errorHandler(err));
 	}
 	// Setup S3 bucket and configure static hosting policy
-	setS3(bucketName) {
+	setS3(bucketName, config) {
 		return new Promise((resolve, reject) => {
 			this.getBuckets(bucketName)
 				.then(buckets => this.bucketExists(buckets, bucketName))
@@ -78,6 +77,4 @@ class S3BucketGenerator {
 		console.log(err);
 	}
 }
-
-module.exports = new S3BucketGenerator(Config);
 

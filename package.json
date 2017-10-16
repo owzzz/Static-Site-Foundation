@@ -30,5 +30,8 @@
     "contentful": "^4.6.2",
     "express": "^4.16.2",
     "handlebars": "^4.0.10"
+  },
+  "devDependencies": {
+    "serverless-offline": "^3.16.0"
   }
 }
