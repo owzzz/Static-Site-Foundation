@@ -1,16 +1,12 @@
 const Contentful = require('contentful');
-const Config = require('../config').contentful;
 
-class ContentfulAdapter {
+
+module.exports = class ContentfulClient {
 	constructor(Config) {
 		this.client = Contentful.createClient({
 			space: Config.spaceId,
 			accessToken: Config.accessToken
 		});
-
-		this.syncContent().then(data => {
-			this.syncToken = data.nextSyncToken;
-		}).catch(err => console.log('error', err));
 	}
 
 	syncContent() {
@@ -25,6 +21,4 @@ class ContentfulAdapter {
 		return this.client.getEntries({'sys.id': id});
 	}
 }
-
-let ContentfulInstance = new ContentfulAdapter(Config);
 

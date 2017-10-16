@@ -1,100 +1,69 @@
-
+const Config = require('./config');
+const ContentfulClient = require('./libs/Contentful');
+const S3Client = require('./libs/S3');
+const TemplaterClient = require('./libs/Templater');
+const AWS = require('aws-sdk');
 module.exports.sync = (event, context, callback) => {
-  const Config = require('../config');
-  const ContentfulAdapter = require('../src/ContentfulAdapter');
-  const S3Adapter = require('../src/AWSS3Adapter');
-  const Templater = require('../src/Templater');
-  const fs = require('fs');
-  console.log(event);
-  const content = {
-    "sys": {
-      "space": {
-        "sys": {
-          "type": "Link",
-          "linkType": "Space",
-          "id": "jciqgcuub56q"
-        }
-      },
-      "id": "6TuNcbRQR2C8G400iOwWey",
-      "type": "Entry",
-      "createdAt": "2017-10-13T23:30:55.613Z",
-      "updatedAt": "2017-10-15T15:18:45.181Z",
-      "createdBy": {
-        "sys": {
-          "type": "Link",
-          "linkType": "User",
-          "id": "61A9BTh726FFMvvTiexLUw"
-        }
-      },
-      "updatedBy": {
-        "sys": {
-          "type": "Link",
-          "linkType": "User",
-          "id": "61A9BTh726FFMvvTiexLUw"
-        }
-      },
-      "publishedCounter": 2,
-      "version": 18,
-      "publishedBy": {
-        "sys": {
-          "type": "Link",
-          "linkType": "User",
-          "id": "61A9BTh726FFMvvTiexLUw"
-        }
-      },
-      "publishedVersion": 17,
-      "firstPublishedAt": "2017-10-13T23:31:07.908Z",
-      "publishedAt": "2017-10-15T15:18:45.181Z",
-      "contentType": {
-        "sys": {
-          "type": "Link",
-          "linkType": "ContentType",
-          "id": "company"
-        }
-      }
-    },
-    "fields": {
-      "title": {
-        "en-US": "Area 51"
-      },
-      "subtitle": {
-        "en-US": "A subtitle goes here"
-      },
-      "template": {
-        "en-US": "home"
-      }
-    }
-  };
+  console.log('EVENT', JSON.parse(event.body));
+  const template = new TemplaterClient('./templates/home.html', JSON.parse(event.body));
 
-  const template = null;
 
-  fs.readFile('./templates/home.html', (err, file) => {
-    if (err) throw err;
-    console.log('FILE CALLED', typeof file, file.toString('utf8'));
-    console.log('CONTENT CALLED', content);
+  // Generate template
+  template.generateTemplate()
+    .then((template) => {
+      // Instansiate S3 Client
+       const S3 = new S3Client(Config.S3);
 
-    let Template = new Templater(file.toString('utf8'), content);
-    let S3 = new S3Adapter(Config.S3);
-
-        S3.putObject({Bucket: S3.bucketName, Body: Template, Key: 'Home-Page'}).then((data) => {
+        S3.putObject({Bucket: S3.bucketName, Body: template, Key: `${Content.fields.template['en-US']}.html`, ContentType: 'text/html'}).then((data) => {
           const response = {
             statusCode: 200,
             body: JSON.stringify({
               message: 'Home Page Created/Updated',
               input: data,
+              event: event.body
+            }),
+          };
+
+          const SNS = new AWS.SNS();
+
+          SNS.publish({
+              Message: 'File placed on S3',
+              TopicArn: 'arn:aws:sns:us-east-1:828844078135:log-content'
+          }, (err, data) => {
+              if (err) {
+                  console.log(err.stack);
+                  return;
+              }
+              console.log('push sent');
+              console.log('EVENT', event);
+              context.done(null, 'Function Finished!');
+          });
+
+          callback(null, response);
+        }).catch((err) => {
+          const response = {
+            statusCode: 404,
+            body: JSON.stringify({
+              message: 'Error Putting Object',
+              error: err
             }),
           };
 
           callback(null, response);
-        });
-  });
+        })
+    })
+    .catch(err => {
+        const response = {
+          statusCode: 404,
+          body: {
+            message: 'Template could not be created',
+            error: err,
+            event: event
+          }
+        };
 
-  // Content has changed
-  // Sync content and get delta
-  // Take data and run through template compiler
-  // Save in S3
-
-
+        callback(null, response);
+    })
 
 
   // Use this code if you don't use the http event with the LAMBDA-PROXY integration
