@@ -26,24 +26,20 @@ provider:
 #  region: us-east-1
 
 # you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
-
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:PutObject"
+      Resource:
+        Fn::Join:
+          - ""
+          - - "arn:aws:s3:::"
+            - "Ref" : ${env:AWS_S3_BUCKET}
+            - "/*"
+  custom:
+    stage: "${opt:stage, self:provider.stage}"
 # you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+  environment: ${file(env.yml):${self:custom.stage}}
 
 # you can add packaging information here
 #package:
@@ -92,12 +88,12 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
+resources:
+  Resources:
+    S3BucketSite:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${env:AWS_S3_BUCKET}
 #  Outputs:
 #     NewOutput:
 #       Description: "Description for the output"

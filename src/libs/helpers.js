@@ -1,13 +1,12 @@
 
 module.exports = (() => {
 
-  errorHandler(err, msg, errCode) {
+  let errorHandler = (err, msg, errCode) => {
     return {
       statusCode: errCode,
-        body: {
-          message: msg,
-          error: err
-        }
+      body: {
+        message: msg,
+        error: err
       }
     }
   }
@@ -15,4 +14,5 @@ module.exports = (() => {
   return {
     errorHandler
   }
+
 })();
