@@ -18,3 +18,5 @@ Inside the ```src``` folder run the following commands
 ```
 npm install
 ```
+
+Create ```config.js```
