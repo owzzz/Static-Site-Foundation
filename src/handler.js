@@ -5,13 +5,9 @@ const TemplaterClient = require('./libs/Templater');
 const AWS = require('aws-sdk');
 const Helpers = require('./libs/helpers');
 
-console.log(Helpers);
 
 module.exports.sync = (event, context, callback) => {
-  console.log('EVENT', JSON.parse(event.body));
   const template = new TemplaterClient('./templates/home.html', JSON.parse(event.body));
-
-
 
   // Generate template
   template.generateTemplate()
@@ -20,11 +16,11 @@ module.exports.sync = (event, context, callback) => {
       // Instansiate S3 Client
         const S3 = new S3Client(Config.S3);
 
-        S3.putObject({Bucket: S3.bucketName, Body: template, Key: `${JSON.parse(event.body).fields.template['en-US']}.html`, ContentType: 'text/html'}).then((data) => {
+        S3.putObject({Bucket: process.env.AWS_S3_BUCKET, Body: template, Key: `${template.getContentData().fields.template['en-US']}.html`, ContentType: 'text/html'}).then((data) => {
           callback(null, {
             statusCode: 200,
             body: JSON.stringify({
-              message: `${JSON.parse(event.body).fields.template['en-US']}.html Created/Updated`,
+              message: `${template.getContentData().fields.template['en-US']}.html Created/Updated`,
               input: data,
               event: event.body
             }),

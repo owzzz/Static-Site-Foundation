@@ -5,10 +5,6 @@ class Templater {
   constructor(templatePath, data = {}) {
     this.templatePath = templatePath;
     this.data = data;
-
-    console.log('initialise templater', this);
-    console.log('templatepath', this.templatePath);
-    console.log('data', data);
   }
 
   generateTemplate() {
@@ -17,6 +13,10 @@ class Templater {
       console.log('html found', html);
       return this.populatedTemplate = this.compileTemplate(this.parseTemplate(html), this.data);
     }).catch((err) => console.log('error fetching template', err));
+  }
+
+  getContentData() {
+    return this.data;
   }
 
   fetchTemplate(path) {
