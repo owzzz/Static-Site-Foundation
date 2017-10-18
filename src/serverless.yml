@@ -20,6 +20,8 @@ service: sync-site
 provider:
   name: aws
   runtime: nodejs6.10
+# you can define service wide environment variables here
+  environment: ${file(./env.yml):${self:custom.stage}}
 
 # you can overwrite defaults here
 #  stage: dev
@@ -29,17 +31,8 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - "s3:PutObject"
-      Resource:
-        Fn::Join:
-          - ""
-          - - "arn:aws:s3:::"
-            - "Ref" : ${env:AWS_S3_BUCKET}
-            - "/*"
-  custom:
-    stage: "${opt:stage, self:provider.stage}"
-# you can define service wide environment variables here
-  environment: ${file(env.yml):${self:custom.stage}}
+        - "s3:*"
+      Resource: arn:aws:s3:::${env:AWS_S3_BUCKET}
 
 # you can add packaging information here
 #package:
@@ -49,6 +42,8 @@ provider:
 #  exclude:
 #    - exclude-me.js
 #    - exclude-me-dir/**
+custom:
+  stage: ${opt:stage, 'dev'}
 plugins:
   - serverless-offline
 functions:
